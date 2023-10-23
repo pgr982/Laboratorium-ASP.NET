@@ -1,0 +1,27 @@
+﻿@model Birth
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="col-6">
+            <h2>Wprowadź swoje dane</h2>
+            <form asp-action="Result" method="post">
+                <div class="mb-3">
+                    <label class="form-label" for="Name">Imię</label>
+                    <input class="form-control" asp-for="Name" id="Name" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="BirthDate">Data urodzenia</label>
+                    <input class="form-control" asp-for="BirthDate" id="BirthDate" type="date" />
+                </div>
+                <div class="mb-3">
+                    <button class="btn btn-primary" type="submit">Oblicz wiek</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
