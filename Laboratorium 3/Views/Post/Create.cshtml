@@ -4,12 +4,16 @@
 *@
 @{
 }
-
-<form asp-controller="Post" asp-action="Update" method="post">
+<h1>Utwórz post</h1>
+<form asp-controller="Post" asp-action="Create" method="post">
     <div class="mb-3">
-        <label asp-for="Content" rows="5">Treść: </label>
-        <input class="form-control" asp-for="Content" />
+        <label asp-for="Content">Treść: </label>
+        <textarea class="form-control" asp-for="Content" rows="5" maxlength="1500"></textarea>
         <span class="text-danger" asp-validation-for="Content"></span>
+        <div class="text-muted text-right">
+            <span id="currentCount">0</span>/1500 znaków
+        </div>
+        
     </div>
     <div class="mb-3">
         <label asp-for="Autor">Autor: </label>
@@ -23,10 +27,47 @@
     </div>
     <div class="mb-3">
         <label asp-for="Comment">Komentarz: </label>
-        <input class="form-control" asp-for="Comment" />
+        <textarea class="form-control" asp-for="Comment" rows="2" maxlength="500"></textarea>
         <span class="text-danger" asp-validation-for="Comment"></span>
+        <div class="text-muted text-right">
+            <span id="commentCount">0</span>/500 znaków
+        </div>
     </div>
     <div class="mb-3">
         <button class="btn btn-primary" type="submit">Zapisz</button>
     </div>
 </form>
+
+@section Scripts {
+    <script>
+        var contentTextarea = document.querySelector('textarea[name="Content"]');
+        var commentTextarea = document.querySelector('textarea[name="Comment"]');
+        var characterCount = document.getElementById('currentCount');
+        var commentCount = document.getElementById('commentCount');
+
+        contentTextarea.addEventListener('input', updateCharacterCount);
+        commentTextarea.addEventListener('input', updateCommentCount);
+
+        function updateCharacterCount() {
+            var currentCount = contentTextarea.value.length;
+            characterCount.textContent = currentCount;
+
+            if (currentCount > 1500) {
+                characterCount.classList.add('text-danger');
+            } else {
+                characterCount.classList.remove('text-danger');
+            }
+        }
+
+        function updateCommentCount() {
+            var currentCount = commentTextarea.value.length;
+            commentCount.textContent = currentCount;
+
+            if (currentCount > 500) {
+                commentCount.classList.add('text-danger');
+            } else {
+                commentCount.classList.remove('text-danger');
+            }
+        }
+    </script>
+}

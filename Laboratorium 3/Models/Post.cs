@@ -17,7 +17,7 @@ namespace Laboratorium_3.Models
         [Required(ErrorMessage = "Musisz podać przynajmniej jeden tag")]
         public string Tags { get; set; }
         [StringLength(maximumLength: 500, ErrorMessage = "Komentarz nie może być dłuższy niż 500 znaków")]
-        public string Comment { get; set; }
+        public string? Comment { get; set; }
 
     }
 }
