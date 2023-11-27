@@ -7,7 +7,7 @@
 <h1>Utwórz post</h1>
 <form asp-controller="Post" asp-action="Create" method="post">
     <div class="mb-3">
-        <label asp-for="Content">Treść: </label>
+        <label asp-for="Content"></label>
         <textarea class="form-control" asp-for="Content" rows="5" maxlength="1500"></textarea>
         <span class="text-danger" asp-validation-for="Content"></span>
         <div class="text-muted text-right">
@@ -16,17 +16,17 @@
         
     </div>
     <div class="mb-3">
-        <label asp-for="Autor">Autor: </label>
+        <label asp-for="Autor"></label>
         <input class="form-control" asp-for="Autor" />
         <span class="text-danger" asp-validation-for="Autor"></span>
     </div>
     <div class="mb-3">
-        <label asp-for="Tags">Tagi: </label>
+        <label asp-for="Tags"></label>
         <input class="form-control" asp-for="Tags" />
         <span class="text-danger" asp-validation-for="Tags"></span>
     </div>
     <div class="mb-3">
-        <label asp-for="Comment">Komentarz: </label>
+        <label asp-for="Comment"></label>
         <textarea class="form-control" asp-for="Comment" rows="2" maxlength="500"></textarea>
         <span class="text-danger" asp-validation-for="Comment"></span>
         <div class="text-muted text-right">

@@ -1,4 +1,4 @@
-﻿@model Dictionary<int, Contact>
+﻿@model List<Contact>
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -9,10 +9,13 @@
     <table class="table">
         <tr>
             <th>
-                Imie
+                @Html.DisplayNameFor(model => model[0].Name)
             </th>
             <th>
-                Email
+                @Html.DisplayNameFor(model => model[0].Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Priority)
             </th>
             <th>
                 Akcje
@@ -22,24 +25,27 @@
         {
             <tr>
                 <td>
-                    @item.Value.Name
+                    @item.Name
                 </td>
                 <td>
-                    @item.Value.Email
+                    @item.Email
+                </td>
+                <td>
+                    @item.Priority.GetDisplayName()
                 </td>
                 <td>
                     <a class="btn btn-outline-primary"
                        asp-action="Update"
                        asp-controller="Contact"
-                       asp-route-id=@item.Value.Id>Edytuj</a>
+                       asp-route-id=@item.Id>Edytuj</a>
                     <a class="btn btn-outline-info"
                        asp-action="Details"
                        asp-controller="Contact"
-                       asp-route-id=@item.Value.Id>Szczegóły</a>
+                       asp-route-id=@item.Id>Szczegóły</a>
                     <a class="btn btn-outline-danger"
                        asp-action="Delete"
                        asp-controller="Contact"
-                       asp-route-id=@item.Value.Id>Usuń</a>
+                       asp-route-id=@item.Id>Usuń</a>
                 </td>
             </tr>
         }

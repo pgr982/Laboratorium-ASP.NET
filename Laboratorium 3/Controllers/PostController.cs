@@ -1,15 +1,22 @@
 ﻿using Laboratorium_3.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection;
 
 namespace Laboratorium_3.Controllers
 {
     public class PostController : Controller
     {
-        static readonly Dictionary<int, Post> _posts = new Dictionary<int, Post>();
-        static int index = 1;
+
+        //static readonly Dictionary<int, Post> _posts = new Dictionary<int, Post>();
+        //static int index = 1;
+        private readonly IPostService _postService;
+        public PostController(IPostService postService)
+        {
+            _postService = postService;
+        }
         public IActionResult Index()
         {
-            return View(_posts);
+            return View(_postService.FindAll());
         }
         [HttpGet]
         public IActionResult Create()
@@ -21,41 +28,41 @@ namespace Laboratorium_3.Controllers
         {
             if (ModelState.IsValid)
             {
-                model.Id = index++;
-                model.PostDate = DateTime.Now;
-                _posts[model.Id] = model;
+                _postService.Add(model);
                 return RedirectToAction("Index");
             }
             return View();
         }
 
-
         [HttpGet]
         public IActionResult Update(int id)
         {
-            return View(_posts[id]);
+            return View(_postService.FindById(id));
         }
+
         [HttpPost]
         public IActionResult Update(Post model)
         {
             if (ModelState.IsValid)
             {
-                _posts[model.Id] = model;
+                _postService.Update(model);
                 return RedirectToAction("Index");
             }
             return View();
         }
+
         [HttpGet]
         public IActionResult Details(int id)
         {
-            return View(_posts[id]);
+            return View(_postService.FindById(id));
         }
+
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            if (_posts.ContainsKey(id))
+            if (ModelState.IsValid)
             {
-                _posts.Remove(id);
+                _postService.Delete(id);
                 return RedirectToAction("Index");
             }
             return RedirectToAction("Index");

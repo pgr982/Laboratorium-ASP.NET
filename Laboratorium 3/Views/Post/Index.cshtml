@@ -1,4 +1,4 @@
-﻿@model Dictionary<int, Post>
+﻿@model List<Post>
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -9,13 +9,16 @@
     <table class="table">
         <tr>
             <th>
-                Treść
+                @Html.DisplayNameFor(model => model[0].Content)
             </th>
             <th>
-                Autor
+                @Html.DisplayNameFor(model => model[0].Autor)
             </th>
             <th>
-                Komentarz
+                @Html.DisplayNameFor(model => model[0].Tags)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Comment)
             </th>
             <th>
                 Akcje
@@ -25,27 +28,30 @@
         {
             <tr>
                 <td>
-                    @item.Value.Content
+                    @item.Content
                 </td>
                 <td>
-                    @item.Value.Autor
+                    @item.Autor
                 </td>
                 <td>
-                    @item.Value.Comment
+                    @item.Tags
+                </td>
+                <td>
+                    @item.Comment
                 </td>
                 <td>
                     <a class="btn btn-outline-primary"
                        asp-action="Update"
                        asp-controller="Post"
-                       asp-route-id=@item.Value.Id>Edytuj</a>
+                       asp-route-id=@item.Id>Edytuj</a>
                     <a class="btn btn-outline-info"
                        asp-action="Details"
                        asp-controller="Post"
-                       asp-route-id=@item.Value.Id>Szczegóły</a>
+                       asp-route-id=@item.Id>Szczegóły</a>
                     <a class="btn btn-outline-danger"
                        asp-action="Delete"
                        asp-controller="Post"
-                       asp-route-id=@item.Value.Id>Usuń</a>
+                       asp-route-id=@item.Id>Usuń</a>
                 </td>
             </tr>
         }
