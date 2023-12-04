@@ -43,6 +43,11 @@ namespace Laboratorium_3.Models
             return _items[id];
         }
 
+        public PagingList<Contact> FindPage(int pageIndex, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Update(Contact item)
         {
             _items[item.Id] = item;

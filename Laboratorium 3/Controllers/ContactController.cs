@@ -18,6 +18,11 @@ namespace Laboratorium_3.Controllers
             return View(_contactService.FindAll());
         }
 
+        public IActionResult PagedIndex([FromQuery] int page = 1, [FromQuery] int size = 5)
+        {
+            return View(_contactService.FindPage(page, size));
+        }
+
         [HttpGet]
         public IActionResult Create()
         {
@@ -32,6 +37,24 @@ namespace Laboratorium_3.Controllers
 
         [HttpPost]
         public IActionResult Create(Contact model)
+        {
+            if (ModelState.IsValid)
+            {
+                _contactService.Add(model);
+                return RedirectToAction("Index");
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult CreateApi()
+        {
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CreateApi(Contact model)
         {
             if (ModelState.IsValid)
             {

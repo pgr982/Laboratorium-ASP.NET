@@ -1,0 +1,84 @@
+﻿@model Contact
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<h1>Dodaj nowy kontakt</h1>
+<form asp-controller="Contact" asp-action="Create" method="post">
+    @* <div asp-validation-summary="All"></div> *@
+    <div class="mb-3">
+        <label asp-for="Name"></label>
+        <input class="form-control" asp-for="Name" />
+
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email"></label>
+        <input class="form-control" asp-for="Email" />
+        <span class="text-danger" asp-validation-for="Email"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Phone"></label>
+        <input class="form-control" asp-for="Phone" />
+        <span class="text-danger" asp-validation-for="Phone"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Birth"></label>
+        <input class="form-control" asp-for="Birth" />
+        <span class="text-danger" asp-validation-for="Birth"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Priority"></label>
+        <div>
+            <span asp-validation-for="Priority" class="text-danger"></span>
+        </div>
+        <select class="form-control" asp-for="Priority" asp-items="@Html.GetEnumSelectList<Priority>()"></select>
+    </div>
+
+    <div class="mb-3">
+        <label for="filter">Filtr organizacji</label>
+        <input class="form-control mb-3" type="text" name="filter" id="filter" />
+        <label asp-for="OrganizationId"></label>
+        <select class="form-control mb-3" asp-for="OrganizationId"></select>
+    </div>
+
+    <div class="mb-3">
+        <input class="btn btn-primary" type="submit" value="Utwórz" />
+        <input class="btn btn-secondary" type="reset" value="Wyczyść" />
+    </div>
+
+</form>
+
+@section Scripts{
+    <script>
+        let select = document.getElementById("OrganizationId");
+        let filter = document.getElementById("filter");
+        filter.onchange = function (e) {
+            if (filter.value.lenght == 0) {
+                return;
+            }
+            fetch(`/api/contacts?filter=${filter.value}`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json()
+                    }
+                    throw "no ok, status " + response.status;
+                })
+                .then(json => {
+                    select.innerHTML = '';
+                    for (let item of json) {
+                        let option = document.createElement('option');
+                        option.setAttribute('value', item.id);
+                        option.innerText = item.title;
+                        select.appendChild(option);
+                    }
+                })
+                .catch(e => {
+                    console.log('cant get data from api', e);
+                });
+        };
+    </script>
+}

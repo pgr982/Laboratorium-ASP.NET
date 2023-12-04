@@ -17,8 +17,10 @@ namespace Laboratorium_3.Models
             var e = _context.Contacts.Add(ContactMapper.ToEntity(contact));
             e.Entity.Created = DateTime.Now;
             _context.SaveChanges();
-            return e.Entity.Id;
+            int id = e.Entity.Id;
+            return id;
         }
+
 
         public void Delete(int id)
         {
@@ -43,7 +45,20 @@ namespace Laboratorium_3.Models
         public Contact? FindById(int id)
         {
             ContactEntity? find = _context.Contacts.Find(id);
-            return find == null ? null : ContactMapper.FromEntity(find);
+
+            return find != null ? ContactMapper.FromEntity(find) : null;
+        }
+
+        public PagingList<Contact> FindPage(int page, int size)
+        {
+            int totalCount = _context.Contacts.Count();
+            List<Contact> contacts = _context.Contacts
+             .Skip((page - 1) * size)
+             .Take(size)
+             .Select(ContactMapper.FromEntity) // Użyj mappera do przekształcenia
+             .ToList();
+            return PagingList<Contact>.Create(contacts, totalCount, page, size);
+
         }
 
         public void Update(Contact contact)
