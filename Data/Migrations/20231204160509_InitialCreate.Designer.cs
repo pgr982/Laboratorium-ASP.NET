@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231204103748_InitialCreate")]
+    [Migration("20231204160509_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -179,6 +179,150 @@ namespace Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NormalizedName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IdentityRole");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "2d59e80e-76d1-4323-91f2-3cfd16c397a9",
+                            ConcurrencyStamp = "2d59e80e-76d1-4323-91f2-3cfd16c397a9",
+                            Name = "admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "59c62ed1-222d-4bac-a089-10a8af96b27b",
+                            ConcurrencyStamp = "59c62ed1-222d-4bac-a089-10a8af96b27b",
+                            Name = "user",
+                            NormalizedName = "USER"
+                        });
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IdentityUser");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "8692ba94-e087-47c2-b9e6-6eb7a73e676a",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "c0d2de0a-2659-4c26-86c3-af03a7ba951f",
+                            Email = "adam@wsei.edu.pl",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEPXl7K0qxJP4J2rwEq8H80CgQU9Bwqrt+1v2jcdzHKZftHq6zllPryNME/sD2MdUQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "a499f7a3-e2a7-461a-a652-6fb0954373c8",
+                            TwoFactorEnabled = false,
+                            UserName = "adam"
+                        },
+                        new
+                        {
+                            Id = "9b6886cb-f6ec-4442-a806-ff3b0a72fdd4",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "806be0f4-215c-416c-b57a-52b6442a9ca7",
+                            Email = "ewa@wsei.edu.pl",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedUserName = "EWA",
+                            PasswordHash = "AQAAAAIAAYagAAAAEId/aEL/YJn+T+rcTvRPqtU8X+utO/Oe5REhOeN6Sym7yrAktSQrSWySikBQN605Sw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "dcad43bd-4c7c-4876-b78c-e5fdfd45f80c",
+                            TwoFactorEnabled = false,
+                            UserName = "ewa"
+                        });
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.ToTable("IdentityUserRole<string>");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "8692ba94-e087-47c2-b9e6-6eb7a73e676a",
+                            RoleId = "2d59e80e-76d1-4323-91f2-3cfd16c397a9"
+                        },
+                        new
+                        {
+                            UserId = "9b6886cb-f6ec-4442-a806-ff3b0a72fdd4",
+                            RoleId = "59c62ed1-222d-4bac-a089-10a8af96b27b"
+                        });
+                });
+
             modelBuilder.Entity("Data.Entities.ContactEntity", b =>
                 {
                     b.HasOne("Data.Entities.OrganizationEntity", "Organization")
@@ -239,7 +383,8 @@ namespace Data.Migrations
                                 });
                         });
 
-                    b.Navigation("Address");
+                    b.Navigation("Address")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Data.Entities.OrganizationEntity", b =>

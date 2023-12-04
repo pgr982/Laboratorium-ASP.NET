@@ -1,4 +1,5 @@
 ﻿using Data.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,93 @@ namespace Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
+            string ADMIN_ID = Guid.NewGuid().ToString();
+            string ROLE_ID = Guid.NewGuid().ToString();
+
+            // Dodanie roli administratora
+            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
+            {
+                Name = "admin",
+                NormalizedName = "ADMIN",
+                Id = ROLE_ID,
+                ConcurrencyStamp = ROLE_ID
+            });
+
+            // Utworzenie administratora jako użytkownika
+            var admin = new IdentityUser
+            {
+                Id = ADMIN_ID,
+                Email = "adam@wsei.edu.pl",
+                EmailConfirmed = true,
+                UserName = "adam",
+                NormalizedUserName = "ADMIN"
+            };
+
+            // Haszowanie hasła
+            PasswordHasher<IdentityUser> ph = new PasswordHasher<IdentityUser>();
+            admin.PasswordHash = ph.HashPassword(admin, "1234abcd!@#$ABCD");
+
+            // Zapisanie użytkownika
+            modelBuilder.Entity<IdentityUser>().HasData(admin);
+
+            // Przypisanie roli administratora użytkownikowi
+            modelBuilder.Entity<IdentityUserRole<string>>(entity =>
+            {
+                entity.HasData(new IdentityUserRole<string>
+                {
+                    RoleId = ROLE_ID,
+                    UserId = ADMIN_ID
+                });
+
+                // Konfiguracja klucza głównego dla IdentityUserRole<string>
+                entity.HasKey(e => new { e.UserId, e.RoleId });
+            });
+
+            // Dodanie drugiego użytkownika i roli
+            string USER_ID = Guid.NewGuid().ToString();
+            string USER_ROLE_ID = Guid.NewGuid().ToString();
+
+            var user = new IdentityUser
+            {
+                Id = USER_ID,
+                Email = "ewa@wsei.edu.pl",
+                EmailConfirmed = true,
+                UserName = "ewa",
+                NormalizedUserName = "EWA"
+            };
+
+            // Haszowanie hasła dla drugiego użytkownika
+            PasswordHasher<IdentityUser> ph2 = new PasswordHasher<IdentityUser>();
+            user.PasswordHash = ph2.HashPassword(user, "abcd!@#$1234ABCD");
+
+            // Zapisanie drugiego użytkownika
+            modelBuilder.Entity<IdentityUser>().HasData(user);
+
+            // Dodanie roli dla drugiego użytkownika
+            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
+            {
+                Name = "user",
+                NormalizedName = "USER",
+                Id = USER_ROLE_ID,
+                ConcurrencyStamp = USER_ROLE_ID
+            });
+
+            // Przypisanie roli użytkownika drugiemu użytkownikowi
+            modelBuilder.Entity<IdentityUserRole<string>>(entity =>
+            {
+                entity.HasData(new IdentityUserRole<string>
+                {
+                    RoleId = USER_ROLE_ID,
+                    UserId = USER_ID
+                });
+
+                // Konfiguracja klucza głównego dla IdentityUserRole<string>
+                entity.HasKey(e => new { e.UserId, e.RoleId });
+            });
+
+            //dodawanie organizacji
             modelBuilder.Entity<ContactEntity>()
                 .HasOne(c => c.Organization)
                 .WithMany(o => o.Contacts)
@@ -49,6 +137,9 @@ namespace Data
                     }
             );
 
+
+
+            //dodawanie kontaktów
             modelBuilder.Entity<ContactEntity>().HasData(
                 new ContactEntity()
                 { 
@@ -74,6 +165,7 @@ namespace Data
 
             );
 
+            //dodawanie postów
             modelBuilder.Entity<PostEntity>().HasData(
                 new PostEntity() 
                 { 
@@ -89,6 +181,7 @@ namespace Data
                 }
             );
 
+            //dodawanie adresów
             modelBuilder.Entity<OrganizationEntity>()
                 .OwnsOne(e => e.Address)
                 .HasData(
