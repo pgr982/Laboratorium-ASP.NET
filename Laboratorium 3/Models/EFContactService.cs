@@ -35,6 +35,11 @@ namespace Laboratorium_3.Models
             return _context.Contacts.Select(e => ContactMapper.FromEntity(e)).ToList(); ;
         }
 
+        public List<OrganizationEntity> FindAllOrganizations()
+        {
+            return _context.Organizations.ToList();
+        }
+
         public Contact? FindById(int id)
         {
             ContactEntity? find = _context.Contacts.Find(id);

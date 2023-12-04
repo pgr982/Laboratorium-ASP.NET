@@ -13,6 +13,7 @@ namespace Data.Entities
     {
 
         public DateTime Created { get; set; }
+
         [Key]
         public int Id { get; set; }
         [MaxLength(50)]
@@ -31,5 +32,9 @@ namespace Data.Entities
         public DateTime? Birth { get; set; }
 
         public int Priority { get; set; }
+
+        public int OrganizationId { get; set; }
+
+        public OrganizationEntity? Organization { get; set; }
     }
 }

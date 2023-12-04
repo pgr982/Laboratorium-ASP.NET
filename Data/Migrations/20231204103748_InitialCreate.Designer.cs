@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231204014255_InitialCreate")]
+    [Migration("20231204103748_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -43,6 +43,9 @@ namespace Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Phone")
                         .HasMaxLength(12)
                         .HasColumnType("TEXT");
@@ -51,6 +54,8 @@ namespace Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrganizationId");
 
                     b.ToTable("contacts");
 
@@ -62,6 +67,7 @@ namespace Data.Migrations
                             Created = new DateTime(2020, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "adam@wsei.edu.pl",
                             Name = "Adam",
+                            OrganizationId = 1,
                             Phone = "127813268163",
                             Priority = 1
                         },
@@ -72,8 +78,48 @@ namespace Data.Migrations
                             Created = new DateTime(2021, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "ewa@wsei.edu.pl",
                             Name = "Ewa",
+                            OrganizationId = 2,
                             Phone = "293443823478",
                             Priority = 2
+                        });
+                });
+
+            modelBuilder.Entity("Data.Entities.OrganizationEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Nip")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Regon")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Organizations");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Nip = "83492384",
+                            Regon = "13424234",
+                            Title = "WSEI"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Nip = "2498534",
+                            Regon = "0873439249",
+                            Title = "Firma"
                         });
                 });
 
@@ -131,6 +177,74 @@ namespace Data.Migrations
                             PostDate = new DateTime(1835, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Tags = "tag1,tag2"
                         });
+                });
+
+            modelBuilder.Entity("Data.Entities.ContactEntity", b =>
+                {
+                    b.HasOne("Data.Entities.OrganizationEntity", "Organization")
+                        .WithMany("Contacts")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("Data.Entities.OrganizationEntity", b =>
+                {
+                    b.OwnsOne("Data.Models.Address", "Address", b1 =>
+                        {
+                            b1.Property<int>("OrganizationEntityId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("PostalCode")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Region")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("OrganizationEntityId");
+
+                            b1.ToTable("Organizations");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrganizationEntityId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    OrganizationEntityId = 1,
+                                    City = "Kraków",
+                                    PostalCode = "31-150",
+                                    Region = "małopolskie",
+                                    Street = "Św. Filipa 17"
+                                },
+                                new
+                                {
+                                    OrganizationEntityId = 2,
+                                    City = "Kraków",
+                                    PostalCode = "31-150",
+                                    Region = "małopolskie",
+                                    Street = "Krowoderska 45/6"
+                                });
+                        });
+
+                    b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("Data.Entities.OrganizationEntity", b =>
+                {
+                    b.Navigation("Contacts");
                 });
 #pragma warning restore 612, 618
         }

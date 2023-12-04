@@ -40,7 +40,13 @@
     </div>
 
     <div class="mb-3">
+        <label asp-for="OrganizationId">Organizacja</label>
+        <select class="form-control" asp-for="OrganizationId" asp-items="@Model.Organizations"></select>
+    </div>
+
+    <div class="mb-3">
         <input class="btn btn-primary" type="submit" value="Utwórz" />
         <input class="btn btn-secondary" type="reset" value="Wyczyść" />
     </div>
+
 </form>

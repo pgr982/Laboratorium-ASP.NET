@@ -15,6 +15,7 @@ namespace Laboratorium_3.Models
                 Phone = entity.Phone,
                 Birth = entity.Birth,
                 Priority = (Priority)entity.Priority,
+                OrganizationId = entity.OrganizationId,
             };
         }
 
@@ -29,6 +30,7 @@ namespace Laboratorium_3.Models
                 Phone = model.Phone,
                 Birth = model.Birth,
                 Priority = (int)model.Priority,
+                OrganizationId = (int)model.OrganizationId,
             };
         }
     }

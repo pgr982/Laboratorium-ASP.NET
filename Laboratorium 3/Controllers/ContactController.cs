@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Laboratorium_3.Models;
 using System.Reflection;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Laboratorium_3.Controllers
 {
@@ -20,7 +21,12 @@ namespace Laboratorium_3.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            Contact model = new Contact();
+            model.Organizations = _contactService
+                .FindAllOrganizations()
+                .Select(o => new SelectListItem() { Value = o.Id.ToString(), Text = o.Title })
+                .ToList();
+            return View(model);
         }
 
 
@@ -43,12 +49,23 @@ namespace Laboratorium_3.Controllers
             {
                 return NotFound();
             }
+            contact.Organizations = _contactService.FindAllOrganizations().Select(eo => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+            {
+                Text = eo.Title,
+                Value = eo.Id.ToString(),
+            }).ToList();
             return View(contact);
         }
 
         [HttpPost]
         public IActionResult Update(Contact model)
         {
+            model.Organizations = _contactService.FindAllOrganizations().Select(eo => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+            {
+                Text = eo.Title,
+                Value = eo.Id.ToString(),
+            }).ToList();
+
             if (ModelState.IsValid)
             {
                 _contactService.Update(model);
@@ -78,7 +95,19 @@ namespace Laboratorium_3.Controllers
         [HttpGet]
         public IActionResult Details(int id)
         {
-            return View(_contactService.FindById(id));
+            Contact contact = _contactService.FindById(id);
+
+            if (contact == null)
+            {
+                return NotFound();
+            }
+
+            var organization = _contactService.FindAllOrganizations()
+                .FirstOrDefault(eo => eo.Id == contact.OrganizationId);
+
+            contact.OrganizationName = organization?.Title;
+
+            return View(contact);
         }
     }
 }

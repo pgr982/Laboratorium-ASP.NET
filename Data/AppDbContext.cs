@@ -12,6 +12,7 @@ namespace Data
     {
         public DbSet<ContactEntity> Contacts { get; set; }
         public DbSet<PostEntity> Posts { get; set; }
+        public DbSet<OrganizationEntity> Organizations { get; set; }
 
         private string DbPath { get; set; }
 
@@ -27,9 +28,50 @@ namespace Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ContactEntity>()
+                .HasOne(c => c.Organization)
+                .WithMany(o => o.Contacts)
+                .HasForeignKey(e => e.OrganizationId);
+            modelBuilder.Entity<OrganizationEntity>().HasData(
+                    new OrganizationEntity()
+                    {
+                        Id = 1,
+                        Title = "WSEI",
+                        Nip = "83492384",
+                        Regon = "13424234",
+                    },
+                    new OrganizationEntity()
+                    {
+                        Id = 2,
+                        Title = "Firma",
+                        Nip = "2498534",
+                        Regon = "0873439249",
+                    }
+            );
+
             modelBuilder.Entity<ContactEntity>().HasData(
-                new ContactEntity() { Id = 1, Name = "Adam", Email = "adam@wsei.edu.pl", Phone = "127813268163", Birth = new DateTime(2000, 10, 10), Priority = 1, Created = new DateTime(2020, 10, 10) },
-                new ContactEntity() { Id = 2, Name = "Ewa", Email = "ewa@wsei.edu.pl", Phone = "293443823478", Birth = new DateTime(1999, 8, 10), Priority = 2, Created = new DateTime(2021, 10, 10) }
+                new ContactEntity()
+                { 
+
+                    Id = 1, Name = "Adam", 
+                    Email = "adam@wsei.edu.pl",
+                    Phone = "127813268163",
+                    Birth = new DateTime(2000, 10, 10), 
+                    Created = new DateTime(2020, 10, 10),
+                    Priority = 1,
+                    OrganizationId = 1
+
+                },
+                new ContactEntity() 
+                { 
+                    Id = 2, Name = "Ewa",
+                    Email = "ewa@wsei.edu.pl", Phone = "293443823478",
+                    Birth = new DateTime(1999, 8, 10),
+                    Created = new DateTime(2021, 10, 10),
+                    Priority = 2,
+                    OrganizationId = 2
+                }
+
             );
 
             modelBuilder.Entity<PostEntity>().HasData(
@@ -46,6 +88,13 @@ namespace Data
                     Tags = "tag1,tag2", Comment = "komentarz 2" 
                 }
             );
+
+            modelBuilder.Entity<OrganizationEntity>()
+                .OwnsOne(e => e.Address)
+                .HasData(
+                    new { OrganizationEntityId = 1, City = "Kraków", Street = "Św. Filipa 17", PostalCode = "31-150", Region = "małopolskie" },
+                    new { OrganizationEntityId = 2, City = "Kraków", Street = "Krowoderska 45/6", PostalCode = "31-150", Region = "małopolskie" }
+                );
         }
     }
 }
