@@ -8,6 +8,7 @@ namespace Laboratorium_3.Models
 
         private Dictionary<int, Contact> _items = new Dictionary<int, Contact>();
 
+
         public MemoryContactService(IDateTimeProvider timeProvider)
         {
             _timeProvider = timeProvider;
@@ -30,7 +31,7 @@ namespace Laboratorium_3.Models
 
         public List<Contact> FindAll()
         {
-            return _items.Values.ToList();
+            return new List<Contact>() { new Contact() { Id = 1} };
         }
 
         public List<OrganizationEntity> FindAllOrganizations()
@@ -39,8 +40,12 @@ namespace Laboratorium_3.Models
         }
 
         public Contact? FindById(int id)
-        {
-            return _items[id];
+        {   
+            if (_items.ContainsKey(id))
+            {
+                return _items[id];
+            }
+            return null;
         }
 
         public PagingList<Contact> FindPage(int pageIndex, int pageSize)
