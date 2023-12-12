@@ -1,11 +1,17 @@
 using Data;
 using Laboratorium_3.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Laboratorium_3.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("Laboratorium_3ContextConnection") ?? throw new InvalidOperationException("Connection string 'Laboratorium_3ContextConnection' not found.");
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>();
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<Laboratorium_3Context>();
 
 //builder.Services.AddSingleton<IContactService, MemoryContactService>();
 builder.Services.AddTransient<IContactService, EFContactService>();
