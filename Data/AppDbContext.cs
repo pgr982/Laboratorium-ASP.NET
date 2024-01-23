@@ -1,5 +1,6 @@
 ﻿using Data.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<IdentityUser>
     {
         public DbSet<ContactEntity> Contacts { get; set; }
         public DbSet<PostEntity> Posts { get; set; }
@@ -31,89 +32,65 @@ namespace Data
         {
             base.OnModelCreating(modelBuilder);
 
+            //użytkownicy
+            // Dodaj użytkownika admin
             string ADMIN_ID = Guid.NewGuid().ToString();
-            string ROLE_ID = Guid.NewGuid().ToString();
-
-            // Dodanie roli administratora
-            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
-            {
-                Name = "admin",
-                NormalizedName = "ADMIN",
-                Id = ROLE_ID,
-                ConcurrencyStamp = ROLE_ID
-            });
-
-            // Utworzenie administratora jako użytkownika
             var admin = new IdentityUser
             {
                 Id = ADMIN_ID,
-                Email = "adam@wsei.edu.pl",
+                Email = "admin@wsei.pl",
                 EmailConfirmed = true,
                 UserName = "adam",
-                NormalizedUserName = "ADMIN"
+                NormalizedUserName = "ADAM"
             };
 
             // Haszowanie hasła
             PasswordHasher<IdentityUser> ph = new PasswordHasher<IdentityUser>();
-            admin.PasswordHash = ph.HashPassword(admin, "1234abcd!@#$ABCD");
+            admin.PasswordHash = ph.HashPassword(admin, "Admin123");
 
-            // Zapisanie użytkownika
-            modelBuilder.Entity<IdentityUser>().HasData(admin);
-
-            // Przypisanie roli administratora użytkownikowi
-            modelBuilder.Entity<IdentityUserRole<string>>(entity =>
-            {
-                entity.HasData(new IdentityUserRole<string>
-                {
-                    RoleId = ROLE_ID,
-                    UserId = ADMIN_ID
-                });
-
-                // Konfiguracja klucza głównego dla IdentityUserRole<string>
-                entity.HasKey(e => new { e.UserId, e.RoleId });
-            });
-
-            // Dodanie drugiego użytkownika i roli
+            // Dodaj użytkownika user
             string USER_ID = Guid.NewGuid().ToString();
-            string USER_ROLE_ID = Guid.NewGuid().ToString();
-
             var user = new IdentityUser
             {
                 Id = USER_ID,
-                Email = "ewa@wsei.edu.pl",
+                Email = "user@wsei.pl",
                 EmailConfirmed = true,
                 UserName = "ewa",
                 NormalizedUserName = "EWA"
             };
 
-            // Haszowanie hasła dla drugiego użytkownika
-            PasswordHasher<IdentityUser> ph2 = new PasswordHasher<IdentityUser>();
-            user.PasswordHash = ph2.HashPassword(user, "abcd!@#$1234ABCD");
+            // Haszowanie hasła
+            user.PasswordHash = ph.HashPassword(user, "Ewa123");
 
-            // Zapisanie drugiego użytkownika
-            modelBuilder.Entity<IdentityUser>().HasData(user);
-
-            // Dodanie roli dla drugiego użytkownika
-            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
+            // Dodaj role admin
+            string ADMIN_ROLE_ID = Guid.NewGuid().ToString();
+            var adminRole = new IdentityRole
             {
+                Id = ADMIN_ROLE_ID,
+                Name = "admin",
+                NormalizedName = "ADMIN",
+                ConcurrencyStamp = ADMIN_ROLE_ID
+            };
+
+            // Dodaj role user
+            string USER_ROLE_ID = Guid.NewGuid().ToString();
+            var userRole = new IdentityRole
+            {
+                Id = USER_ROLE_ID,
                 Name = "user",
                 NormalizedName = "USER",
-                Id = USER_ROLE_ID,
                 ConcurrencyStamp = USER_ROLE_ID
-            });
+            };
 
-            // Przypisanie roli użytkownika drugiemu użytkownikowi
-            modelBuilder.Entity<IdentityUserRole<string>>(entity =>
-            {
-                entity.HasData(new IdentityUserRole<string>
-                {
-                    RoleId = USER_ROLE_ID,
-                    UserId = USER_ID
-                });
+            // Dodaj dane do bazy danych
+            modelBuilder.Entity<IdentityUser>().HasData(admin, user);
+            modelBuilder.Entity<IdentityRole>().HasData(adminRole, userRole);
 
-                // Konfiguracja klucza głównego dla IdentityUserRole<string>
-                entity.HasKey(e => new { e.UserId, e.RoleId });
-            });
+            // Przypisz role użytkownikom
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+                new IdentityUserRole<string> { RoleId = ADMIN_ROLE_ID, UserId = ADMIN_ID },
+                new IdentityUserRole<string> { RoleId = USER_ROLE_ID, UserId = USER_ID }
+            );
 
             //dodawanie organizacji
             modelBuilder.Entity<ContactEntity>()
@@ -142,21 +119,24 @@ namespace Data
             //dodawanie kontaktów
             modelBuilder.Entity<ContactEntity>().HasData(
                 new ContactEntity()
-                { 
+                {
 
-                    Id = 1, Name = "Adam", 
+                    Id = 1,
+                    Name = "Adam",
                     Email = "adam@wsei.edu.pl",
                     Phone = "127813268163",
-                    Birth = new DateTime(2000, 10, 10), 
+                    Birth = new DateTime(2000, 10, 10),
                     Created = new DateTime(2020, 10, 10),
                     Priority = 1,
                     OrganizationId = 1
 
                 },
-                new ContactEntity() 
-                { 
-                    Id = 2, Name = "Ewa",
-                    Email = "ewa@wsei.edu.pl", Phone = "293443823478",
+                new ContactEntity()
+                {
+                    Id = 2,
+                    Name = "Ewa",
+                    Email = "ewa@wsei.edu.pl",
+                    Phone = "293443823478",
                     Birth = new DateTime(1999, 8, 10),
                     Created = new DateTime(2021, 10, 10),
                     Priority = 2,
@@ -167,17 +147,23 @@ namespace Data
 
             //dodawanie postów
             modelBuilder.Entity<PostEntity>().HasData(
-                new PostEntity() 
-                { 
-                    Id = 1, Content = "Treść postu 1",
-                    Autor = "Adam", PostDate = new DateTime(2023, 05, 12),
-                    Tags = "tag1,tag2", Comment = "komentarz 1" 
+                new PostEntity()
+                {
+                    Id = 1,
+                    Content = "Treść postu 1",
+                    Autor = "Adam",
+                    PostDate = new DateTime(2023, 05, 12),
+                    Tags = "tag1,tag2",
+                    Comment = "komentarz 1"
                 },
-                new PostEntity() 
-                { Id = 2, Content = "Treść postu 2",
+                new PostEntity()
+                {
+                    Id = 2,
+                    Content = "Treść postu 2",
                     Autor = "Ewa",
                     PostDate = new DateTime(1835, 11, 10),
-                    Tags = "tag1,tag2", Comment = "komentarz 2" 
+                    Tags = "tag1,tag2",
+                    Comment = "komentarz 2"
                 }
             );
 
